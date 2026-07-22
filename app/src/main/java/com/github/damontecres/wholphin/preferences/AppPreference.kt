@@ -914,6 +914,63 @@ sealed interface AppPreference<Pref, T> {
                 summaryOff = R.string.disabled,
             )
 
+        val MpvSubMargins =
+            AppSwitchPreference<AppPreferences>(
+                title = R.string.mpv_sub_margins,
+                defaultValue = true,
+                getter = {
+                    PreferenceManager
+                        .getDefaultSharedPreferences(WholphinApplication.instance)
+                        .getBoolean("mpv_sub_margins", true)
+                },
+                setter = { prefs, value ->
+                    PreferenceManager
+                        .getDefaultSharedPreferences(WholphinApplication.instance)
+                        .edit { putBoolean("mpv_sub_margins", value) }
+                    prefs
+                },
+                summaryOn = R.string.enabled,
+                summaryOff = R.string.disabled,
+            )
+
+        val MpvOsdMargins =
+            AppSwitchPreference<AppPreferences>(
+                title = R.string.mpv_osd_margins,
+                defaultValue = true,
+                getter = {
+                    PreferenceManager
+                        .getDefaultSharedPreferences(WholphinApplication.instance)
+                        .getBoolean("mpv_osd_margins", true)
+                },
+                setter = { prefs, value ->
+                    PreferenceManager
+                        .getDefaultSharedPreferences(WholphinApplication.instance)
+                        .edit { putBoolean("mpv_osd_margins", value) }
+                    prefs
+                },
+                summaryOn = R.string.enabled,
+                summaryOff = R.string.disabled,
+            )
+
+        val MpvDynamicMargins =
+            AppSwitchPreference<AppPreferences>(
+                title = R.string.mpv_dynamic_margins,
+                defaultValue = false,
+                getter = {
+                    PreferenceManager
+                        .getDefaultSharedPreferences(WholphinApplication.instance)
+                        .getBoolean("mpv_dynamic_margins", false)
+                },
+                setter = { prefs, value ->
+                    PreferenceManager
+                        .getDefaultSharedPreferences(WholphinApplication.instance)
+                        .edit { putBoolean("mpv_dynamic_margins", value) }
+                    prefs
+                },
+                summaryOn = R.string.enabled,
+                summaryOff = R.string.disabled,
+            )
+
         val MpvConfFile =
             AppClickablePreference<AppPreferences>(
                 title = R.string.mpv_conf,
@@ -1171,6 +1228,9 @@ private val MpvSettings =
     listOf(
         AppPreference.MpvHardwareDecoding,
         AppPreference.MpvGpuNext,
+        AppPreference.MpvSubMargins,
+        AppPreference.MpvOsdMargins,
+        AppPreference.MpvDynamicMargins,
         AppPreference.MpvConfFile,
     )
 

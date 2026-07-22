@@ -23,4 +23,18 @@ object MPVLib {
         key: String,
         value: Boolean,
     ): Unit = throw MpvStubException()
+
+    /**
+     * Set a raw mpv option (e.g., --script-opts=osc-deadzonesize=0.75).
+     * Uses the mpv set_option_string API.
+     */
+    fun setOptionString(
+        key: String,
+        value: String,
+    ): Unit = throw MpvStubException()
+
+    /**
+     * Send a raw mpv command (e.g., ["load-script", "/path/to/osc.lua"]).
+     */
+    fun command(vararg args: String): Unit = throw MpvStubException()
 }

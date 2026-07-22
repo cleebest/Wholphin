@@ -389,6 +389,12 @@
     <string name="dolby_atmos">Dolby Atmos</string>
     <string name="mpv_use_gpu_next">MPV: Use gpu-next</string>
     <string name="mpv_conf">Edit mpv.conf</string>
+    <string name="mpv_sub_margins">MPV: Subtitles avoid OSC</string>
+    <string name="mpv_sub_margins_summary">Automatically adjust subtitle position when OSC is visible</string>
+    <string name="mpv_osd_margins">MPV: OSD messages avoid OSC</string>
+    <string name="mpv_osd_margins_summary">Automatically adjust OSD message position when OSC is visible</string>
+    <string name="mpv_dynamic_margins">MPV: Dynamic margins</string>
+    <string name="mpv_dynamic_margins_summary">Update video margins dynamically when OSC visibility changes</string>
     <string name="discard_change">Discard changes?</string>
     <string name="subtitle_margin">Margin</string>
     <string name="verbose_logging">Verbose logging</string>

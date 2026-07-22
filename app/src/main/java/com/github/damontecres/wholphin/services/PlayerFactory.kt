@@ -6,6 +6,7 @@ import android.content.Context
 import android.os.Build
 import android.os.Handler
 import androidx.annotation.OptIn
+import androidx.preference.PreferenceManager
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.Player
@@ -25,6 +26,7 @@ import androidx.media3.exoplayer.video.MediaCodecVideoRenderer
 import androidx.media3.exoplayer.video.VideoRendererEventListener
 import androidx.media3.extractor.DefaultExtractorsFactory
 import androidx.media3.session.MediaSession
+import com.github.damontecres.wholphin.mpv.MpvOscOptions
 import com.github.damontecres.wholphin.mpv.MpvPlayer
 import com.github.damontecres.wholphin.preferences.AppPreferences
 import com.github.damontecres.wholphin.preferences.AssPlaybackMode
@@ -79,7 +81,8 @@ class PlayerFactory
                     -> {
                         val enableHardwareDecoding = prefs.mpvOptions.enableHardwareDecoding
                         val useGpuNext = prefs.mpvOptions.useGpuNext
-                        MpvPlayer(context, enableHardwareDecoding, useGpuNext)
+                        val oscOptions = getMpvOscOptions(context)
+                        MpvPlayer(context, enableHardwareDecoding, useGpuNext, oscOptions)
                     }
 
                     PlayerBackend.EXO_PLAYER,
@@ -220,7 +223,16 @@ class PlayerFactory
                 )
             }
 
-        fun createMediaSession(player: Player) =
+        private fun getMpvOscOptions(context: Context): MpvOscOptions {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+        return MpvOscOptions(
+            dynamicMargins = prefs.getBoolean("mpv_dynamic_margins", false),
+            subMargins = prefs.getBoolean("mpv_sub_margins", true),
+            osdMargins = prefs.getBoolean("mpv_osd_margins", true),
+        )
+    }
+
+    fun createMediaSession(player: Player) =
             MediaSession
                 .Builder(context, player)
                 .build()
