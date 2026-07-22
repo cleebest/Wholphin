@@ -52,9 +52,9 @@ espressoCore = "3.7.0"
 material = "1.14.0"
 
 [libraries]
-wholphin-extensions-mpv = { module = "com.github.damontecres.wholphin.mpv:wholphin-mpv", version.ref = "wholphin-extensions" }
-wholphin-extensions-ffmpeg = { module = "com.github.damontecres.wholphin.media3:decoder-ffmpeg", version.ref = "wholphin-extensions" }
-wholphin-extensions-av1 = { module = "com.github.damontecres.wholphin.media3:decoder-av1", version.ref = "wholphin-extensions" }
+wholphin-extensions-mpv = { module = "com.github.cleebest.wholphin.mpv:wholphin-mpv", version.ref = "wholphin-extensions" }
+wholphin-extensions-ffmpeg = { module = "com.github.cleebest.wholphin.media3:decoder-ffmpeg", version.ref = "wholphin-extensions" }
+wholphin-extensions-av1 = { module = "com.github.cleebest.wholphin.media3:decoder-av1", version.ref = "wholphin-extensions" }
 aboutlibraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref = "aboutLibraries" }
 aboutlibraries-compose-m3 = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutLibraries" }
 acra-dialog = { module = "ch.acra:acra-dialog", version.ref = "acra" }

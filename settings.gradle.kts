@@ -19,7 +19,7 @@ dependencyResolutionManagement {
         @Suppress("ktlint:standard:property-naming")
         val WholphinExtensionsUsername: String? by settings
         if (!WholphinExtensionsUsername.isNullOrBlank()) {
-            maven("https://maven.pkg.github.com/damontecres/wholphin-extensions") {
+            maven("https://maven.pkg.github.com/cleebest/wholphin-extensions") {
                 name = "WholphinExtensions"
                 credentials(PasswordCredentials::class)
             }
