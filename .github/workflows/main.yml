@@ -52,7 +52,7 @@ jobs:
           KEY_STORE_PASSWORD: "${{ secrets.KEY_STORE_PASSWORD }}"
           SIGNING_KEY: "${{ secrets.SIGNING_KEY }}"
         run: |
-          ./gradlew clean assembleDefaultRelease assembleDefaultDebug --no-daemon
+          ./gradlew clean assembleDefaultDebug --no-daemon
 
       - name: Verify signatures
         run: |
