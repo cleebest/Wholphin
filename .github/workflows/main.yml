@@ -23,6 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      packages: read
     steps:
       - name: Checkout the code
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
@@ -51,8 +52,8 @@ jobs:
           KEY_PASSWORD: "${{ secrets.KEY_PASSWORD }}"
           KEY_STORE_PASSWORD: "${{ secrets.KEY_STORE_PASSWORD }}"
           SIGNING_KEY: "${{ secrets.SIGNING_KEY }}"
-          ORG_GRADLE_PROJECT_WholphinExtensionsUsername: "${{ secrets.EXTENSIONS_USERNAME }}"
-          ORG_GRADLE_PROJECT_WholphinExtensionsPassword: "${{ secrets.EXTENSIONS_PASSWORD }}"
+          ORG_GRADLE_PROJECT_WholphinExtensionsUsername: "cleebest"
+          ORG_GRADLE_PROJECT_WholphinExtensionsPassword: "${{ secrets.GITHUB_TOKEN }}"
         run: |
           ./gradlew clean assembleDefaultRelease assembleDefaultDebug --no-daemon
 
@@ -95,11 +96,11 @@ jobs:
 
           This pre-release tracks the development build of Wholphin from the `${{ env.BRANCH_NAME }}` unstable branch.
 
-          See https://github.com/damontecres/Wholphin/releases/latest for the latest stable release.
+          See https://github.com/cleebest/Wholphin/releases/latest for the latest stable release.
 
-          If you want to update to this version in-app, change Settings->Advanced->Update URL to https://api.github.com/repos/damontecres/Wholphin/releases/tags/${{ env.TAG_NAME }} (replace `latest` with `tags/${{ env.TAG_NAME }}`).
+          If you want to update to this version in-app, change Settings->Advanced->Update URL to https://api.github.com/repos/cleebest/Wholphin/releases/tags/${{ env.TAG_NAME }} (replace `latest` with `tags/${{ env.TAG_NAME }}`).
 
-          [See changes since `${{ env.LATEST_TAG }}`](https://github.com/damontecres/Wholphin/compare/${{ env.LATEST_TAG }}...${{ env.TAG_NAME }})' > ci_release_note.txt
+          [See changes since `${{ env.LATEST_TAG }}`](https://github.com/cleebest/Wholphin/compare/${{ env.LATEST_TAG }}...${{ env.TAG_NAME }})' > ci_release_note.txt
 
 
            gh release create "${{ env.TAG_NAME }}" \
