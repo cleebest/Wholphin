@@ -45,6 +45,22 @@ jobs:
           echo "LATEST_TAG=$LATEST_TAG" >> "$GITHUB_ENV"
           echo "VERSION_NAME=$VERSION_NAME" >> "$GITHUB_ENV"
           echo "TAG_NAME=$TAG_NAME" >> "$GITHUB_ENV"
+      - name: Download mpv AAR from extensions
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p app/libs
+
+          # Download the latest successful build artifacts from wholphin-extensions
+          RUN_ID=$(gh run list -R cleebest/wholphin-extensions --limit 10 --json databaseId,conclusion,headBranch --jq '[.[] | select(.conclusion=="success")][0].databaseId')
+          echo "Downloading from wholphin-extensions run $RUN_ID"
+          gh run download "$RUN_ID" -R cleebest/wholphin-extensions --dir /tmp/extensions
+
+          # Copy AARs to app/libs
+          find /tmp/extensions -name "*.aar" -exec cp {} app/libs/ \;
+          echo "AARs downloaded:"
+          ls -la app/libs/
+
       - name: Build release app
         id: build
         env:
@@ -52,8 +68,6 @@ jobs:
           KEY_PASSWORD: "${{ secrets.KEY_PASSWORD }}"
           KEY_STORE_PASSWORD: "${{ secrets.KEY_STORE_PASSWORD }}"
           SIGNING_KEY: "${{ secrets.SIGNING_KEY }}"
-          ORG_GRADLE_PROJECT_WholphinExtensionsUsername: "cleebest"
-          ORG_GRADLE_PROJECT_WholphinExtensionsPassword: "${{ secrets.GITHUB_TOKEN }}"
         run: |
           ./gradlew clean assembleDefaultRelease assembleDefaultDebug --no-daemon
 
