@@ -44,6 +44,23 @@ jobs:
           echo "LATEST_TAG=$LATEST_TAG" >> "$GITHUB_ENV"
           echo "VERSION_NAME=$VERSION_NAME" >> "$GITHUB_ENV"
           echo "TAG_NAME=$TAG_NAME" >> "$GITHUB_ENV"
+      - name: Download custom mpv AAR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p app/libs
+
+          # Get the LATEST successful run from wholphin-extensions (sort desc)
+          RUN_ID=$(gh run list -R cleebest/wholphin-extensions --limit 20 --json databaseId,conclusion \
+            --jq 'map(select(.conclusion=="success")) | sort_by(.databaseId) | reverse | .[0].databaseId')
+          echo "Downloading from wholphin-extensions run $RUN_ID"
+          gh run download "$RUN_ID" -R cleebest/wholphin-extensions --dir /tmp/mpv-aar-dl
+
+          # Copy ALL AARs (recursive find for nested dirs in artifact)
+          find /tmp/mpv-aar-dl -name "*.aar" -exec cp -v {} app/libs/ \;
+          echo "AARs downloaded:"
+          ls -la app/libs/
+
       - name: Build release app
         id: build
         env:
