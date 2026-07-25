@@ -1,0 +1,41 @@
+name: Sync from upstream
+
+on:
+  schedule:
+    - cron: '0 8 * * 1'  # Every Monday at 8am
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Sync upstream
+        run: |
+          git remote add upstream https://github.com/damontecres/Wholphin.git
+          git fetch upstream main
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+
+          # Try fast-forward merge first
+          if git merge-base --is-ancestor HEAD upstream/main; then
+            echo "Already up to date"
+            exit 0
+          fi
+
+          # Check if upstream can be merged cleanly
+          if git merge --no-commit --no-ff upstream/main 2>/dev/null; then
+            git merge --abort 2>/dev/null || true
+            echo "UPSTREAM_UPDATED=true" >> $GITHUB_ENV
+            git merge upstream/main -m "Merge upstream/main"
+            git push origin main
+          else
+            git merge --abort 2>/dev/null || true
+            echo "Merge conflict detected, skipping auto-merge"
+          fi
