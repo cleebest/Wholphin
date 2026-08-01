@@ -1,0 +1,112 @@
+name: Build Wholphin APK (custom mpv)
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Weekly, Monday 04:00 UTC
+    - cron: "0 4 * * 1"
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build-mpv-aar:
+    name: Build wholphin-mpv AAR (cleebest/mpv wholphin-dovi)
+    runs-on: ubuntu-latest
+    env:
+      ANDROID_HOME: /usr/local/lib/android/sdk
+      MPV_REPO_URL: https://github.com/cleebest/mpv
+      MPV_REPO_BRANCH: wholphin-dovi
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: cleebest/wholphin-extensions
+          ref: main
+          fetch-depth: 1
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Install native build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y autoconf pkg-config libtool ninja-build unzip wget python3-pip
+          python3 -m pip install --break-system-packages meson jsonschema
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - uses: android-actions/setup-android@v3
+
+      - name: Install SDK platform / NDK
+        run: |
+          yes | sdkmanager --licenses >/dev/null || true
+          sdkmanager "platforms;android-36" "build-tools;36.0.0" "ndk;29.0.14206865" >/dev/null
+
+      - name: Download native deps (patched mpv from cleebest/mpv)
+        run: |
+          cd wholphin-mpv/src/native
+          export PATH="$PATH:$ANDROID_HOME/ndk/29.0.14206865/toolchains/llvm/prebuilt/linux-x86_64/bin"
+          ./get_dependencies.sh
+
+      - name: Build native libmpv (arm64 + armv7l)
+        run: |
+          cd wholphin-mpv/src/native
+          export PATH="$PATH:$ANDROID_HOME/ndk/29.0.14206865/toolchains/llvm/prebuilt/linux-x86_64/bin"
+          ./buildall.sh --clean --arch arm64 mpv
+          ./buildall.sh --arch armv7l mpv
+
+      - name: Build wholphin-mpv AAR
+        run: ./gradlew :wholphin-mpv:assembleRelease --no-daemon
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wholphin-mpv-aar
+          path: wholphin-mpv/build/outputs/aar/wholphin-mpv-release.aar
+
+  build-apk:
+    name: Build Wholphin APK
+    needs: build-mpv-aar
+    runs-on: ubuntu-latest
+    env:
+      ANDROID_HOME: /usr/local/lib/android/sdk
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - uses: android-actions/setup-android@v3
+
+      - name: Install SDK platform
+        run: |
+          yes | sdkmanager --licenses >/dev/null || true
+          sdkmanager "platforms;android-36" "build-tools;36.0.0" >/dev/null
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: wholphin-mpv-aar
+          path: app/libs
+
+      - name: Build debug APK
+        run: |
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+          ./gradlew :app:assembleDefaultDebug --no-daemon
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wholphin-apk
+          path: |
+            app/build/outputs/apk/default/debug/*.apk
+
+      - name: Summarize
+        run: |
+          ls -lh app/build/outputs/apk/default/debug/*.apk
+          echo "APK built with mpv backend: cleebest/mpv@wholphin-dovi"
