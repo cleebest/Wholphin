@@ -24,7 +24,15 @@ jobs:
         with:
           repository: cleebest/wholphin-extensions
           ref: main
-          fetch-depth: 1
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Cache native libmpv prefix
+        id: cache_libmpv
+        uses: actions/cache@v4
+        with:
+          path: wholphin-mpv/build/libmpv/prefix
+          key: ${{ runner.os }}-libmpv-${{ hashFiles('**/wholphin-mpv/src/native/**/*.sh', '**/.github/workflows/*.yml') }}
 
       - uses: actions/setup-java@v4
         with:
@@ -46,12 +54,14 @@ jobs:
           sdkmanager "platforms;android-36" "build-tools;36.0.0" "ndk;29.0.14206865" >/dev/null
 
       - name: Download native deps (patched mpv from cleebest/mpv)
+        if: steps.cache_libmpv.outputs.cache-hit != 'true'
         run: |
           cd wholphin-mpv/src/native
           export PATH="$PATH:$ANDROID_HOME/ndk/29.0.14206865/toolchains/llvm/prebuilt/linux-x86_64/bin"
           ./get_dependencies.sh
 
       - name: Build native libmpv (arm64 + armv7l + x86_64)
+        if: steps.cache_libmpv.outputs.cache-hit != 'true'
         run: |
           cd wholphin-mpv/src/native
           export PATH="$PATH:$ANDROID_HOME/ndk/29.0.14206865/toolchains/llvm/prebuilt/linux-x86_64/bin"
