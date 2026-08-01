@@ -32,7 +32,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: wholphin-mpv/build/libmpv/prefix
-          key: ${{ runner.os }}-libmpv-${{ hashFiles('**/wholphin-mpv/src/native/**/*.sh', '**/.github/workflows/*.yml') }}
+          key: ${{ runner.os }}-libmpv-${{ hashFiles('**/wholphin-mpv/src/native/**/*.sh', '**/wholphin-mpv/src/native/patches/*.patch', '**/.github/workflows/*.yml') }}
 
       - uses: actions/setup-java@v4
         with:
