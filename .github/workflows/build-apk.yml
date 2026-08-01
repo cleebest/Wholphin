@@ -34,7 +34,7 @@ jobs:
       - name: Install native build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y autoconf pkg-config libtool ninja-build unzip wget python3-pip
+          sudo apt-get install -y autoconf pkg-config libtool ninja-build unzip wget python3-pip nasm gperf
           python3 -m pip install --break-system-packages meson jsonschema
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
@@ -51,12 +51,13 @@ jobs:
           export PATH="$PATH:$ANDROID_HOME/ndk/29.0.14206865/toolchains/llvm/prebuilt/linux-x86_64/bin"
           ./get_dependencies.sh
 
-      - name: Build native libmpv (arm64 + armv7l)
+      - name: Build native libmpv (arm64 + armv7l + x86_64)
         run: |
           cd wholphin-mpv/src/native
           export PATH="$PATH:$ANDROID_HOME/ndk/29.0.14206865/toolchains/llvm/prebuilt/linux-x86_64/bin"
           ./buildall.sh --clean --arch arm64 mpv
           ./buildall.sh --arch armv7l mpv
+          ./buildall.sh --arch x86_64 mpv
 
       - name: Build wholphin-mpv AAR
         run: ./gradlew :wholphin-mpv:assembleRelease --no-daemon
